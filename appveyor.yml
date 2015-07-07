@@ -17,7 +17,7 @@ environment:
 
 # scripts that run after cloning repository
 install:
-  - set PATH=C:\Ruby%ruby_version%\bin;%PATH%
+  - set PATH=C:\Ruby%ruby_version%\bin;C:\Python27;%PATH%
   - git submodule update --init
   - ruby --version
   - gem --version
@@ -30,7 +30,6 @@ build_script:
 
 test_script:
   - bundle exec rake spec
-  
+
 artifacts:
   - path: pkg\*.gem
-

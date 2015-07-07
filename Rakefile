@@ -19,6 +19,7 @@ end
 
 desc "compile v8 via the ruby extension mechanism"
 task :compile  do
+  require 'devkit'
   sh "ruby ext/libv8/extconf.rb"
 end
 

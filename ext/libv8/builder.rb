@@ -55,6 +55,7 @@ module Libv8
     end
 
     def build_libv8!
+      setup_devkit!
       setup_python!
       setup_build_deps!
       Dir.chdir(File.expand_path('../../../vendor/v8', __FILE__)) do
@@ -68,6 +69,11 @@ module Libv8
         system command
       end
       return $?.exitstatus
+    end
+
+    def setup_devkit!
+      require 'devkit' if ruby_platform =~ /mingw/
+      ENV['PATH'] = "C:\Python27;#{ENV['PATH']}"
     end
 
     def setup_python!
@@ -109,6 +115,12 @@ module Libv8
           system "gclient sync" or fail "could not sync v8 build dependencies"
         end
       end
+
+      if ruby_platform =~ /mingw/
+        # use a script that will fix the paths in the generated Makefiles
+        # don't use make_flags otherwise it will trigger a rebuild of the Makefiles
+        system "env CXX=#{@compiler} LINK=#{@compiler} bash #{PATCH_DIRECTORY}/mingw-generate-makefiles.sh"
+      end
     end
 
     private
@@ -128,8 +140,8 @@ module Libv8
     end
 
     def python_version
-      if system 'which python 2>&1 > /dev/null'
-        `python -c 'import platform; print(platform.python_version())'`.chomp
+      if `which python` =~ /python/
+        `python -c "import platform; print(platform.python_version())"`.chomp
       else
         "not available"
       end

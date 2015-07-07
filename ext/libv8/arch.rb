@@ -4,8 +4,12 @@ module Libv8
   module Arch
     module_function
 
+    def ruby_platform
+      Gem::Platform.local.cpu
+    end
+
     def libv8_arch
-      case Gem::Platform.local.cpu
+      case ruby_platform
       when /^arm$/          then 'arm'
       when /^a(rm|arch)64$/ then 'arm64'
       when /^x86$/          then 'ia32'
